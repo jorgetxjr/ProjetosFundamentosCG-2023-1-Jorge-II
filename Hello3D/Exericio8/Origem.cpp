@@ -79,7 +79,7 @@ int main()
 //#endif
 
 	// Criação da janela GLFW
-	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Ola Piramide -- Jorge II", nullptr, nullptr);
+	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Ola 3D -- Rossana!", nullptr, nullptr);
 	glfwMakeContextCurrent(window);
 
 	// Fazendo o registro da função de callback para a janela GLFW
@@ -273,27 +273,33 @@ int setupGeometry()
 
 		//Base da pirâmide: 2 triângulos
 		//x    y    z    r    g    b
-		-0.5, -0.5, -0.5, 1.0, 1.0, 0.0,
-		-0.5, -0.5,  0.5, 0.0, 1.0, 1.0,
-		 0.5, -0.5, -0.5, 1.0, 0.0, 1.0,
+		-0.5, -0.5, -0.5, 1.0, 0.0, 0.0,//superior esquerdo
+		-0.5, -0.5,  0.5, 0.0, 1.0, 0.0,//inferior esquerdo
+		 0.5, -0.5, -0.5, 0.0, 0.0, 1.0,//superior direito
 
-		 -0.5, -0.5, 0.5, 1.0, 1.0, 0.0,
-		  0.5, -0.5,  0.5, 0.0, 1.0, 1.0,
-		  0.5, -0.5, -0.5, 1.0, 0.0, 1.0,
+		 -0.5, -0.5, 0.5, 0.0, 1.0, 0.0,//inferior esquerdo
+		  0.5, -0.5,  0.5, 1.0, 0.0, 0.0,//inferior direito
+		  0.5, -0.5, -0.5, 0.0, 0.0, 1.0,//superior direito
 
-		 //
-		 -0.5, -0.5, -0.5, 1.0, 1.0, 0.0,
-		  0.0,  0.5,  0.0, 1.0, 1.0, 0.0,
-		  0.5, -0.5, -0.5, 1.0, 1.0, 0.0,
+		  //face 1
+		 //x     y     z    r    g    b
+		 
+		 -0.5, -0.5, -0.5, 1.0, 0.0, 0.0,//inferior esquerdo
+		  //0.0,  0.5,  0.0, 0.0, 1.0, 0.0,//superior "centro"
+		  0.5,  0.5,  0.0, 0.0, 1.0, 0.0,//superior "centro", deslocado para a direita
+		  0.5, -0.5, -0.5, 0.0, 0.0, 1.0,//inferior direito
 
+		  //
 		  -0.5, -0.5, -0.5, 1.0, 0.0, 1.0,
 		  0.0,  0.5,  0.0, 1.0, 0.0, 1.0,
 		  -0.5, -0.5, 0.5, 1.0, 0.0, 1.0,
 
+		  //
 		   -0.5, -0.5, 0.5, 1.0, 1.0, 0.0,
 		  0.0,  0.5,  0.0, 1.0, 1.0, 0.0,
 		  0.5, -0.5, 0.5, 1.0, 1.0, 0.0,
 
+		  //
 		   0.5, -0.5, 0.5, 0.0, 1.0, 1.0,
 		  0.0,  0.5,  0.0, 0.0, 1.0, 1.0,
 		  0.5, -0.5, -0.5, 0.0, 1.0, 1.0,
