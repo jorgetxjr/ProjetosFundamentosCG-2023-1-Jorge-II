@@ -58,6 +58,7 @@ const GLchar* fragmentShaderSource = "#version 450\n"
 "}\n\0";
 
 bool rotateX=false, rotateY=false, rotateZ=false;
+bool goLeft = false, goRight = false, goUp = false, goDown = false, goZIn = false, goZOut = false;
 
 // Função MAIN
 int main()
@@ -79,7 +80,7 @@ int main()
 //#endif
 
 	// Criação da janela GLFW
-	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Ola piramide -- Jorge II!", nullptr, nullptr);
+	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Ola CUBO -- Jorge II!", nullptr, nullptr);
 	glfwMakeContextCurrent(window);
 
 	// Fazendo o registro da função de callback para a janela GLFW
@@ -116,7 +117,9 @@ int main()
 	glm::mat4 model = glm::mat4(1); //matriz identidade;
 	GLint modelLoc = glGetUniformLocation(shaderID, "model");
 	//
-	model = glm::rotate(model, /*(GLfloat)glfwGetTime()*/glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	//model = glm::rotate(model, /*(GLfloat)glfwGetTime()*/glm::radians(0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	/*Aqui esta linha faz vários nada*/
+	
 	glUniformMatrix4fv(modelLoc, 1, FALSE, glm::value_ptr(model));
 
 	glEnable(GL_DEPTH_TEST);
@@ -154,17 +157,24 @@ int main()
 
 		}
 
+		/*Translações*/
+		if (goLeft) 
+		{
+			model = glm::translate(model, glm::vec3(1.0f, 0.0f, 0.0f));
+		}
+
+
 		glUniformMatrix4fv(modelLoc, 1, FALSE, glm::value_ptr(model));
 		// Chamada de desenho - drawcall
 		// Poligono Preenchido - GL_TRIANGLES
 		
 		glBindVertexArray(VAO);
-		glDrawArrays(GL_TRIANGLES, 0, 18);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		// Chamada de desenho - drawcall
 		// CONTORNO - GL_LINE_LOOP
 		
-		glDrawArrays(GL_POINTS, 0, 18);
+		glDrawArrays(GL_POINTS, 0, 36);
 		glBindVertexArray(0);
 
 		// Troca os buffers da tela
@@ -185,20 +195,21 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
 
+	/*rotação em x*/
 	if (key == GLFW_KEY_X && action == GLFW_PRESS)
 	{
 		rotateX = true;
 		rotateY = false;
 		rotateZ = false;
 	}
-
+	/*rotação em y*/
 	if (key == GLFW_KEY_Y && action == GLFW_PRESS)
 	{
 		rotateX = false;
 		rotateY = true;
 		rotateZ = false;
 	}
-
+	/*rotação em z*/
 	if (key == GLFW_KEY_Z && action == GLFW_PRESS)
 	{
 		rotateX = false;
@@ -206,7 +217,63 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		rotateZ = true;
 	}
 
+	/*TRANSLAÇÕES*/
+	/*TODO: testar com while*/
+	if(key == GLFW_KEY_W && action == GLFW_PRESS)
+	{
+		goLeft = false;
+		goRight = false;
+		goUp = true;
+		goDown = false;
+		goZIn = false;
+		goZOut = false;
 
+	}
+	if (key == GLFW_KEY_A && action == GLFW_PRESS)
+	{
+		goLeft = false;
+		goRight = false;
+		goUp = true;
+		goDown = false;
+		goZIn = false;
+		goZOut = false;
+	}
+	if (key == GLFW_KEY_S && action == GLFW_PRESS)
+	{
+		goLeft = false;
+		goRight = false;
+		goUp = false;
+		goDown = true;
+		goZIn = false;
+		goZOut = false;
+	}
+	if (key == GLFW_KEY_D && action == GLFW_PRESS)
+	{ 
+		goLeft = false;
+		goRight = true;
+		goUp = false;
+		goDown = false;
+		goZIn = false;
+		goZOut = false;
+	}
+	if (key == GLFW_KEY_Q && action == GLFW_PRESS)
+	{ 
+		goLeft = false;
+		goRight = false;
+		goUp = false;
+		goDown = false;
+		goZIn = true;
+		goZOut = false;
+	}
+	if (key == GLFW_KEY_E && action == GLFW_PRESS)
+	{
+		goLeft = false;
+		goRight = false;
+		goUp = false;
+		goDown = false;
+		goZIn = false;
+		goZOut = true;
+	}
 
 }
 
@@ -277,8 +344,8 @@ int setupGeometry()
 		-0.5, -0.5,  0.5, 0.0, 1.0, 0.0,//inferior esquerdo
 		 0.5, -0.5, -0.5, 0.0, 0.0, 1.0,//superior direito
 
-		 -0.5, -0.5, 0.5, 0.0, 1.0, 0.0,//inferior esquerdo
 		  0.5, -0.5,  0.5, 1.0, 0.0, 0.0,//inferior direito
+		 -0.5, -0.5, 0.5, 0.0, 1.0, 0.0,//inferior esquerdo
 		  0.5, -0.5, -0.5, 0.0, 0.0, 1.0,//superior direito
 
 		  //Topo do cubo: 2 triângulos
