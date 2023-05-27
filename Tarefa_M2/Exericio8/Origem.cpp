@@ -59,6 +59,8 @@ const GLchar* fragmentShaderSource = "#version 450\n"
 
 bool rotateX=false, rotateY=false, rotateZ=false;
 bool goLeft = false, goRight = false, goUp = false, goDown = false, goZIn = false, goZOut = false;
+bool scaleIN = false, scaleOUT = false;
+bool padrao = false;
 glm::mat4 ScaleMatrix = glm::scale(glm::mat4(1.f), glm::vec3(0.35, 0.35, 0.35));
 
 // Função MAIN
@@ -74,14 +76,9 @@ int main()
 	//glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	//glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 	//glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-	//Essencial para computadores da Apple
-//#ifdef __APPLE__
-//	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-//#endif
-
+	
 	// Criação da janela GLFW
-	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Ola CUBO -- Jorge II!", nullptr, nullptr);
+	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Ola CUBOS -- Jorge II!", nullptr, nullptr);
 	glfwMakeContextCurrent(window);
 
 	// Fazendo o registro da função de callback para a janela GLFW
@@ -142,9 +139,9 @@ int main()
 		float angle = (GLfloat)glfwGetTime();
 
 		model = glm::mat4(1); 
-		//model = glm::translate(model, glm::vec3(+0.5f, -0.5f, 0.f));
+		model = glm::translate(model, glm::vec3(+0.5f, -0.5f, 0.f));
 		//model = glm::rotate(model, angle, glm::vec3(1.0f, 0.0f, 0.0f));
-		//model *= ScaleMatrix;
+		model *= ScaleMatrix;
 		
 		if (rotateX)
 		{
@@ -187,16 +184,38 @@ int main()
 		*/
 		if (goZIn)
 		{
-			//model = glm::translate(model, glm::vec3(+0.0f, 0.0f, +0.5f));
-			model = glm::scale(glm::mat4(1.f), glm::vec3(1.5f, 1.5f, 1.5f));
+			model = glm::translate(model, glm::vec3(+0.0f, 0.0f, +0.5f));
+			
 
 		}
 		if (goZOut)
 		{
-			//model = glm::translate(model, glm::vec3(+0.0f, 0.0f, -0.5f));
-			model = glm::scale(glm::mat4(1.f), glm::vec3(0.5f, 0.5f, 0.5f));
+			model = glm::translate(model, glm::vec3(+0.0f, 0.0f, -0.5f));
+			
+		}
+
+		/*Escala*/
+		if (scaleIN) 
+		{
+			model=glm::scale(glm::mat4(1.f), glm::vec3(1.5f, 1.5f, 1.5f));
+		}
+		if (scaleOUT) 
+		{
+			model = glm::scale(glm::mat4(1.f), glm::vec3(0.1, 0.1, 0.1));
 		}
 		
+		/*voltar ao padrão*/
+		if (padrao) 
+		{
+			model = glm::mat4(1.0f);
+			model = glm::translate(model, glm::vec3(+0.5f, -0.5f, 0.f));
+			model *= ScaleMatrix;
+			padrao = !padrao;
+			rotateX = rotateY = rotateZ = padrao;
+			goLeft = goRight = goUp = goDown = goZIn = goZOut = padrao;
+			scaleIN = scaleOUT = padrao;
+
+		}
 
 		glUniformMatrix4fv(modelLoc, 1, FALSE, glm::value_ptr(model));
 		// Chamada de desenho - drawcall
@@ -209,10 +228,21 @@ int main()
 		// CONTORNO - GL_LINE_LOOP
 		
 		glDrawArrays(GL_POINTS, 0, 36);
+		
+		/*cubo 2*/
+		model = glm::mat4(1);
+		model = glm::translate(model, glm::vec3(-0.5f, +0.5f, 0.f));
+		model *= ScaleMatrix;
+
+		glUniformMatrix4fv(modelLoc, 1, FALSE, glm::value_ptr(model));
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+		glDrawArrays(GL_POINTS, 0, 36);
 		glBindVertexArray(0);
 
 		// Troca os buffers da tela
 		glfwSwapBuffers(window);
+
+
 	}
 	// Pede pra OpenGL desalocar os buffers
 	glDeleteVertexArrays(1, &VAO);
@@ -228,7 +258,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
-
+	/*TODO: isso pode ser um switch?*/
 	/*rotação em x*/
 	if (key == GLFW_KEY_X && action == GLFW_PRESS)
 	{
@@ -252,7 +282,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	}
 
 	/*TRANSLAÇÕES*/
-	/*TODO: testar com while*/
+	/*TODO: testar com while para mehorar a fluides*/
 	if(key == GLFW_KEY_W && action == GLFW_PRESS)
 	{
 		goLeft = false;
@@ -308,7 +338,24 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		goZIn = false;
 		goZOut = true;
 	}
+	
+	/*ESCALA*/
+	if (key == GLFW_KEY_I && action == GLFW_PRESS) 
+	{
+		scaleIN = true;
+		scaleOUT = !scaleIN;
+	}
+	if (key == GLFW_KEY_J && action == GLFW_PRESS) 
+	{
+		scaleOUT = true;
+		scaleIN = !scaleOUT;
+	}
 
+	/*voltar ao padrao*/
+	if (key == GLFW_KEY_P) 
+	{
+		padrao = !padrao;
+	}
 }
 
 //Esta função está basntante hardcoded - objetivo é compilar e "buildar" um programa de
