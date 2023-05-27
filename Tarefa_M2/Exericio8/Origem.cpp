@@ -59,6 +59,7 @@ const GLchar* fragmentShaderSource = "#version 450\n"
 
 bool rotateX=false, rotateY=false, rotateZ=false;
 bool goLeft = false, goRight = false, goUp = false, goDown = false, goZIn = false, goZOut = false;
+glm::mat4 ScaleMatrix = glm::scale(glm::mat4(1.f), glm::vec3(0.35, 0.35, 0.35));
 
 // Função MAIN
 int main()
@@ -141,10 +142,15 @@ int main()
 		float angle = (GLfloat)glfwGetTime();
 
 		model = glm::mat4(1); 
+		//model = glm::translate(model, glm::vec3(+0.5f, -0.5f, 0.f));
+		//model = glm::rotate(model, angle, glm::vec3(1.0f, 0.0f, 0.0f));
+		//model *= ScaleMatrix;
+		
 		if (rotateX)
 		{
+			//model = glm::translate(model, glm::vec3(+0.0f, 0.0f, 0.f));
 			model = glm::rotate(model, angle, glm::vec3(1.0f, 0.0f, 0.0f));
-			
+			//model *= ScaleMatrix;
 		}
 		else if (rotateY)
 		{
@@ -158,11 +164,39 @@ int main()
 		}
 
 		/*Translações*/
-		if (goLeft) 
+		if (goUp) 
 		{
-			model = glm::translate(model, glm::vec3(1.0f, 0.0f, 0.0f));
+			model = glm::translate(model, glm::vec3(+0.0f, 0.5f, 0.f));
+			//model = glm::rotate(model, angle, glm::vec3(0.0f, 0.0f, 0.0f));
+			//model *= ScaleMatrix;
 		}
+		if (goDown)
+		{
+			model = glm::translate(model, glm::vec3(+0.0f, -0.5f, 0.f));
+		}
+		if (goLeft)
+		{
+			model = glm::translate(model, glm::vec3(-0.5f, 0.0f, 0.f));
+		}
+		if (goRight)
+		{
+			model = glm::translate(model, glm::vec3(+0.5f, 0.0f, 0.f));
+		}
+		/*ao fazer o scale, ele faz o cubo parar de girar.
+		bug ou caractarística?
+		*/
+		if (goZIn)
+		{
+			//model = glm::translate(model, glm::vec3(+0.0f, 0.0f, +0.5f));
+			model = glm::scale(glm::mat4(1.f), glm::vec3(1.5f, 1.5f, 1.5f));
 
+		}
+		if (goZOut)
+		{
+			//model = glm::translate(model, glm::vec3(+0.0f, 0.0f, -0.5f));
+			model = glm::scale(glm::mat4(1.f), glm::vec3(0.5f, 0.5f, 0.5f));
+		}
+		
 
 		glUniformMatrix4fv(modelLoc, 1, FALSE, glm::value_ptr(model));
 		// Chamada de desenho - drawcall
@@ -231,9 +265,9 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	}
 	if (key == GLFW_KEY_A && action == GLFW_PRESS)
 	{
-		goLeft = false;
+		goLeft = true;
 		goRight = false;
-		goUp = true;
+		goUp = false;
 		goDown = false;
 		goZIn = false;
 		goZOut = false;
