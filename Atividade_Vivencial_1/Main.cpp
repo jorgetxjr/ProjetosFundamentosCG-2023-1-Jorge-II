@@ -16,23 +16,22 @@ using namespace std;
 
 string lerArquivoV(const string filepath);
 string lerArquivoF(const string filepath);
+//string* normalizaConteudoV(const string conteudo);
 
 int main(void)
 {
 	string vConteudo;
 	string fConteudo;
 	string conteudo = "arquivo.obj";
-	array<string,3> pontos;
-	int fragmentos[2][9] = {};
-	string triânguloTeste;
+	string pontos[3];
+	string fragmentos[2];
 	int j = 0;
 	int k = 0;
-	string tmp;
-
+	
 	vConteudo = lerArquivoV(conteudo);
 	fConteudo = lerArquivoF(conteudo);
 
-	//cout << "v:\n" << vConteudo << endl;
+	
 	/*trocando espaços por vírgulas*/
 	/*podemos começar aqui uma função 'normaliza pontos'*/
 	for (int i = 0; i < vConteudo.length(); i++)
@@ -42,8 +41,6 @@ int main(void)
 			vConteudo[i] = ',';
 		}
 	}
-	
-	//cout << "v apos manipulacao: \n" << vConteudo << endl;
 	/*splitting nos \n*/
 	for (int i = 0; i < vConteudo.length(); i++)
 	{
@@ -54,56 +51,33 @@ int main(void)
 			k = i + 1;
 		}
 	}
-	//cout << "pontos na posicao zero:\n" << pontos[0] << endl;
+	
 	for (int i = 0; i < size(pontos); i++)
 	{
 		pontos[i] = pontos[i] + "," ;
 	}
-	//cout << "pontos na posicao zero full:\n" << pontos[0] << endl;
+	cout << "pontos na posicao zero full:\n" << pontos[0] << endl;
 	/*fim 'normaliza pontos'*/
+		
+	//cout << "pontos:\n" << pontos[0] << endl;
 
-	/*posso começar uma nova função aqui...*/
-	cout << "f:\n" << fConteudo << endl;
-	for (int i = 0; i < fConteudo.length(); i++)
-	{
-		if (fConteudo[i] == ' ')
-		{
-			fConteudo[i] = '/';
-		}
-	}
-	cout << "f normalizado:\n" << fConteudo << endl;
 	j = 0;
 	k = 0;
+	/*posso começar uma nova função aqui...*/
+	cout << "f:\n" << fConteudo << endl;
+	/*splitting nos \n*/
 	for (int i = 0; i < fConteudo.length(); i++)
 	{
-		if (fConteudo[i] == '/') 
+		if (fConteudo[i] == '\n')
 		{
-			try {
-				fragmentos[j][k] =stoi(tmp) ;
-				k++;
-				tmp = "";
-			}
-			catch (std::invalid_argument const& e) {
-				//std::cout << "Bad input: std::invalid_argument thrown" << std::endl;
-			}
-			catch (std::out_of_range const& e) {
-				std::cout << "Integer overflow: std::out_of_range thrown" << std::endl;
-			}
-		}
-		if (fConteudo[i] == '\n') 
-		{
+			fragmentos[j] = fConteudo.substr(k, i);
 			j++;
-			k = 0;
-			tmp = "";
-		}
-		else 
-		{
-			tmp = tmp + fConteudo[i];
+			k = i + 1;
 		}
 	}
-	for(int i=0;i<2;i++)
-		for(int l=0;l<9;l++)
-			cout << "Posição do fragmento: " << fragmentos[0][0] <<"\n"<< endl;
+	cout << "uma linha de fragmento: \n" << fragmentos[0] << endl;
+	/*cada ponto tem uma relação com um elemento no fragmento. Não sei ainda como fazer isso!*/
+	
 	return 0;
 }
 
@@ -144,3 +118,35 @@ string lerArquivoF(const string filepath)
 
 	return ss.str();
 }
+
+//string* normalizaConteudoV(const string conteudo)
+//{
+//	string vConteudo = lerArquivoV(conteudo);
+//	int k = 0,j=0;
+//	string pontos[3];
+//
+//	for (int i = 0; i < vConteudo.length(); i++)
+//	{
+//		if (vConteudo[i] == ' ')
+//		{
+//			vConteudo[i] = ',';
+//		}
+//	}
+//
+//	for (int i = 0; i < vConteudo.length(); i++)
+//	{
+//		if (vConteudo[i] == '\n')
+//		{
+//			pontos[j] = vConteudo.substr(k, i);
+//			j++;
+//			k = i + 1;
+//		}
+//	}
+//
+//	for (int i = 0; i < size(pontos); i++)
+//	{
+//		pontos[i] = pontos[i] + ",";
+//	}
+//
+//	return pontos;
+//}
