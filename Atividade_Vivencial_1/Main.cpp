@@ -11,6 +11,7 @@
 #include <sstream>
 #include <iostream>
 #include <array>
+#include "ManipulaOBJ.h"
 //#include<vector>
 using namespace std;
 
@@ -18,66 +19,20 @@ string lerArquivoV(const string filepath);
 string lerArquivoF(const string filepath);
 //string* normalizaConteudoV(const string conteudo);
 
+//struct PONTO 
+//{
+//	float x;
+//	float y;
+//	float z;
+//};
+
 int main(void)
 {
-	string vConteudo;
-	string fConteudo;
-	string conteudo = "arquivo.obj";
-	string pontos[3];
-	string fragmentos[2];
-	int j = 0;
-	int k = 0;
-	
-	vConteudo = lerArquivoV(conteudo);
-	fConteudo = lerArquivoF(conteudo);
+	unsigned int n = 0;
+	string caminho = "arquivo.obj";
+	n = contaParametro('v', caminho);
+	cout << "Tamanho do n: " << n << endl;
 
-	
-	/*trocando espaços por vírgulas*/
-	/*podemos começar aqui uma função 'normaliza pontos'*/
-	for (int i = 0; i < vConteudo.length(); i++)
-	{
-		if (vConteudo[i] == ' ')
-		{
-			vConteudo[i] = ',';
-		}
-	}
-	/*splitting nos \n*/
-	for (int i = 0; i < vConteudo.length(); i++)
-	{
-		if (vConteudo[i] == '\n')
-		{
-			pontos[j] = vConteudo.substr(k, i);
-			j++;
-			k = i + 1;
-		}
-	}
-	
-	for (int i = 0; i < size(pontos); i++)
-	{
-		pontos[i] = pontos[i] + "," ;
-	}
-	cout << "pontos na posicao zero full:\n" << pontos[0] << endl;
-	/*fim 'normaliza pontos'*/
-		
-	//cout << "pontos:\n" << pontos[0] << endl;
-
-	j = 0;
-	k = 0;
-	/*posso começar uma nova função aqui...*/
-	cout << "f:\n" << fConteudo << endl;
-	/*splitting nos \n*/
-	for (int i = 0; i < fConteudo.length(); i++)
-	{
-		if (fConteudo[i] == '\n')
-		{
-			fragmentos[j] = fConteudo.substr(k, i);
-			j++;
-			k = i + 1;
-		}
-	}
-	cout << "uma linha de fragmento: \n" << fragmentos[0] << endl;
-	/*cada ponto tem uma relação com um elemento no fragmento. Não sei ainda como fazer isso!*/
-	
 	return 0;
 }
 
@@ -119,34 +74,3 @@ string lerArquivoF(const string filepath)
 	return ss.str();
 }
 
-//string* normalizaConteudoV(const string conteudo)
-//{
-//	string vConteudo = lerArquivoV(conteudo);
-//	int k = 0,j=0;
-//	string pontos[3];
-//
-//	for (int i = 0; i < vConteudo.length(); i++)
-//	{
-//		if (vConteudo[i] == ' ')
-//		{
-//			vConteudo[i] = ',';
-//		}
-//	}
-//
-//	for (int i = 0; i < vConteudo.length(); i++)
-//	{
-//		if (vConteudo[i] == '\n')
-//		{
-//			pontos[j] = vConteudo.substr(k, i);
-//			j++;
-//			k = i + 1;
-//		}
-//	}
-//
-//	for (int i = 0; i < size(pontos); i++)
-//	{
-//		pontos[i] = pontos[i] + ",";
-//	}
-//
-//	return pontos;
-//}
