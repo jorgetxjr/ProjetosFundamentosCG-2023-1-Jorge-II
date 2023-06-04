@@ -3,7 +3,8 @@
 #include <sstream>
 #include <string>
 
-int contaParametro(char parametro, std::string filepath)
+/*VEJA A DOCUMENTAÇÃO NO ARQUIVO .h*/
+int contaParametro(char parametro, std::string filepath)//OK
 {
 	std::fstream file(filepath);
 	std::string linha;
@@ -21,7 +22,7 @@ int contaParametro(char parametro, std::string filepath)
 	return contador;
 }
 
-int contaParametro(std::string parametro, std::string filepath)
+int contaParametro(std::string parametro, std::string filepath)//OK
 {
 	std::fstream file(filepath);
 	std::string linha;
@@ -29,7 +30,7 @@ int contaParametro(std::string parametro, std::string filepath)
 
 	while (getline(file, linha))
 	{
-		if (linha.substr(0,1) == parametro)
+		if (linha.substr(0,2) == parametro)
 		{
 			contador++;
 		}
@@ -39,19 +40,22 @@ int contaParametro(std::string parametro, std::string filepath)
 	return contador;
 }
 
-void preencheMatrizDeTipo(char tipo, PONTO* matrizDePontos, std::string filepath)
+void preencheMatrizDeTipo3(char tipo, PONTO* matrizDePontos, std::string filepath)
 {
 	std::fstream file(filepath);
-	std::stringstream ss;
 	std::string linha;
+	int i = 0;
 
 	while (getline(file, linha))
 	{
 		if (linha[0] == tipo)
 		{
 			linha.erase(0, 2);
-			ss << linha;
+			std::istringstream ss(linha);
+			ss >> matrizDePontos->x >> matrizDePontos->y >> matrizDePontos->z;
+			matrizDePontos++;
 		}
+
 	}
 	file.close();
 

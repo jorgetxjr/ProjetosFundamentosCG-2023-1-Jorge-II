@@ -29,8 +29,9 @@ string lerArquivoF(const string filepath);
 int main(void)
 {
 	unsigned int n = 0;
-	string caminho = "arquivo.obj";
-	n = contaParametro('v', caminho);
+	//string caminho = "arquivo.obj";
+	string caminho = "cube.obj";
+	n = contaParametro("vt", caminho);
 	cout << "Tamanho do n: " << n << endl;
 
 	return 0;
