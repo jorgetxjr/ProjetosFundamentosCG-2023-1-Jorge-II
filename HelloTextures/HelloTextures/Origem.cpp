@@ -1,11 +1,3 @@
-/* Hello Triangle - código adaptado de https://learnopengl.com/#!Getting-started/Hello-Triangle
- *
- * Adaptado por Rossana Baptista Queiroz
- * para a disciplina de Processamento Gráfico - Jogos Digitais - Unisinos
- * Versão inicial: 7/4/2017
- * Última atualização em 11/04/2022
- *
- */
 
 #include <iostream>
 #include <string>
@@ -36,7 +28,7 @@ const float Pi = 3.1419;
 // Protótipo da função de callback de teclado
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 
-// Protótipos das funções - TÁ NA HORA DE REFATORAR ISSO, NÃO ACHAM? 
+// Protótipos das funções - TÁ NA HORA DE REFATORAR ISSO, NÃO ACHAM? NÃO!
 int setupGeometry();
 int generateCircle(float radius, int nPoints);
 int setupSprite();
@@ -60,11 +52,6 @@ int main()
 	//glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	//glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 	//glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-	//Essencial para computadores da Apple
-//#ifdef __APPLE__
-//	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-//#endif
 
 	// Criação da janela GLFW
 	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Hello Textures!", nullptr, nullptr);
@@ -90,7 +77,8 @@ int main()
 	Shader shader("../shaders/sprite.vs", "../shaders/sprite.fs");
 
 	//Carregando uma textura e armazenando o identificador na memória
-	GLuint texID = loadTexture("../textures/mario.png");
+	//GLuint texID = loadTexture("../textures/mario.png");
+	GLuint texID = loadTexture("../textures/music.png");
 
 	// Gerando uma geometria de quadrilátero com coordenadas de textura
 	GLuint VAO = setupSprite();
