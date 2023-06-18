@@ -39,22 +39,31 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 
 
 // Protótipos das funções
-int setupGeometry();
 int loadSimpleOBJ(string filepath, int &nVerts, glm::vec3 color = glm::vec3(1.0,0.0,1.0));
+void loadSimpleMTL(string filepath);
 
 // Dimensões da janela (pode ser alterado em tempo de execução)
 const GLuint WIDTH = 1000, HEIGHT = 1000;
 
+//estados de teclas
 bool rotateX=false, rotateY=false, rotateZ=false;
 
+//posição de câmera
 glm::vec3 cameraPos = glm::vec3(0.0, 0.0, 3.0);
 glm::vec3 cameraFront = glm::vec3(0.0, 0.0, -1.0);
 glm::vec3 cameraUp = glm::vec3(0.0, 1.0, 0.0);
 
+//posição de mouse
 bool firstMouse = true;
 float lastX, lastY;
 float sensitivity = 0.05;
 float pitch = 0.0, yaw = -90.0;
+
+//variaáveis de iluminação
+float ka = 0.0;//OK
+float kd = 0.0;//OK
+float ks = 0.0;//OK
+float q = 0.0; //é o Ns?
 
 // Função MAIN
 int main()
@@ -127,23 +136,34 @@ int main()
 	glEnable(GL_DEPTH_TEST);
 
 	int nVerts;
-	GLuint VAO = loadSimpleOBJ("../../3D_models/Suzanne/suzanneTriLowPoly.obj", nVerts, glm::vec3(0.0,1.0,1.0));
-	GLuint VAO2 = loadSimpleOBJ("../../3D_models/Suzanne/suzanneTriLowPoly.obj", nVerts);
-	GLuint VAO3 = loadSimpleOBJ("../../3D_models/Suzanne/suzanneTriLowPoly.obj", nVerts, glm::vec3(1.0, 1.0, 0.0));
+	string caminhoObj = "C:/Users/jorge/Documents/GitHub/ProjetosFundamentosCG-2023-1-Jorge-II/Tarefa_M4/Suzanne/suzanneTriLowPoly.obj";
+	GLuint VAO0 = loadSimpleOBJ(caminhoObj, nVerts, glm::vec3(0.0,1.0,1.0));
+	GLuint VAO2 = loadSimpleOBJ(caminhoObj, nVerts);
+	GLuint VAO3 = loadSimpleOBJ(caminhoObj, nVerts, glm::vec3(1.0, 1.0, 0.0));
 
 	Mesh suzanne1, suzanne2, suzanne3;
-	suzanne1.initialize(VAO, nVerts, &shader,glm::vec3(-2.75,0.0,0.0));
+	suzanne1.initialize(VAO0, nVerts, &shader,glm::vec3(-2.75,0.0,0.0));
 	suzanne2.initialize(VAO2, nVerts, &shader);
 	suzanne3.initialize(VAO3, nVerts, &shader,glm::vec3(2.75, 0.0, 0.0));
 
+	string caminhoMTL = "C:/Users/jorge/Documents/GitHub/ProjetosFundamentosCG-2023-1-Jorge-II/Tarefa_M4/Suzanne/SuzanneTriTextured.mtl";
+	loadSimpleMTL(caminhoMTL);
 
 	//Definindo as propriedades do material da superficie
-	shader.setFloat("ka", 0.2);
-	shader.setFloat("kd", 0.5);
-	shader.setFloat("ks", 0.5);
-	shader.setFloat("q", 10.0);
+	//shader.setFloat("ka", 0.2);
+	//shader.setFloat("kd", 0.5);
+	//shader.setFloat("ks", 0.5);
+	//shader.setFloat("q", 10.0);
+
+	shader.setFloat("ka", ka);
+	shader.setFloat("kd", kd);
+	shader.setFloat("ks", ks);
+	shader.setFloat("q", q);
+
+
 
 	//Definindo a fonte de luz pontual
+	//isso também é definido no MTL?
 	shader.setVec3("lightPos", -2.0, 10.0, 2.0);
 	shader.setVec3("lightColor", 1.0, 1.0, 0.0);
 
@@ -185,7 +205,7 @@ int main()
 		glfwSwapBuffers(window);
 	}
 	// Pede pra OpenGL desalocar os buffers
-	glDeleteVertexArrays(1, &VAO);
+	glDeleteVertexArrays(1, &VAO0);
 	// Finaliza a execução da GLFW, limpando os recursos alocados por ela
 	glfwTerminate();
 	return 0;
@@ -271,105 +291,6 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
 	cameraFront = glm::normalize(front);
 
-}
-
-
-// Esta função está bastante harcoded - objetivo é criar os buffers que armazenam a 
-// geometria de um triângulo
-// Apenas atributo coordenada nos vértices
-// 1 VBO com as coordenadas, VAO com apenas 1 ponteiro para atributo
-// A função retorna o identificador do VAO
-int setupGeometry()
-{
-	// Aqui setamos as coordenadas x, y e z do triângulo e as armazenamos de forma
-	// sequencial, já visando mandar para o VBO (Vertex Buffer Objects)
-	// Cada atributo do vértice (coordenada, cores, coordenadas de textura, normal, etc)
-	// Pode ser arazenado em um VBO único ou em VBOs separados
-	GLfloat vertices[] = {
-
-		//Base da pirâmide: 2 triângulos
-		//x    y    z    r    g    b
-		-0.5, -0.5, -0.5, 1.0, 1.0, 0.0,
-		-0.5, -0.5,  0.5, 0.0, 1.0, 1.0,
-		 0.5, -0.5, -0.5, 1.0, 0.0, 1.0,
-
-		 -0.5, -0.5, 0.5, 1.0, 1.0, 0.0,
-		  0.5, -0.5,  0.5, 0.0, 1.0, 1.0,
-		  0.5, -0.5, -0.5, 1.0, 0.0, 1.0,
-
-		 //
-		 -0.5, -0.5, -0.5, 1.0, 1.0, 0.0,
-		  0.0,  0.5,  0.0, 1.0, 1.0, 0.0,
-		  0.5, -0.5, -0.5, 1.0, 1.0, 0.0,
-
-		  -0.5, -0.5, -0.5, 1.0, 0.0, 1.0,
-		  0.0,  0.5,  0.0, 1.0, 0.0, 1.0,
-		  -0.5, -0.5, 0.5, 1.0, 0.0, 1.0,
-
-		   -0.5, -0.5, 0.5, 1.0, 1.0, 0.0,
-		  0.0,  0.5,  0.0, 1.0, 1.0, 0.0,
-		  0.5, -0.5, 0.5, 1.0, 1.0, 0.0,
-
-		   0.5, -0.5, 0.5, 0.0, 1.0, 1.0,
-		  0.0,  0.5,  0.0, 0.0, 1.0, 1.0,
-		  0.5, -0.5, -0.5, 0.0, 1.0, 1.0,
-
-		  //Chão
-		  //x    y    z    r    g    b
-		  -5.0, -0.5, -5.0, 0.5, 0.5, 0.5,
-		  -5.0, -0.5,  5.0, 0.5, 0.5, 0.5,
-		   5.0, -0.5, -5.0, 0.5, 0.5, 0.5,
-
-		  -5.0, -0.5,  5.0, 0.5, 0.5, 0.5,
-		   5.0, -0.5,  5.0, 0.5, 0.5, 0.5,
-		   5.0, -0.5, -5.0, 0.5, 0.5, 0.5
-
-	};
-
-	GLuint VBO, VAO;
-
-	//Geração do identificador do VBO
-	glGenBuffers(1, &VBO);
-
-	//Faz a conexão (vincula) do buffer como um buffer de array
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-	//Envia os dados do array de floats para o buffer da OpenGl
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-	//Geração do identificador do VAO (Vertex Array Object)
-	glGenVertexArrays(1, &VAO);
-
-	// Vincula (bind) o VAO primeiro, e em seguida  conecta e seta o(s) buffer(s) de vértices
-	// e os ponteiros para os atributos 
-	glBindVertexArray(VAO);
-	
-	//Para cada atributo do vertice, criamos um "AttribPointer" (ponteiro para o atributo), indicando: 
-	// Localização no shader * (a localização dos atributos devem ser correspondentes no layout especificado no vertex shader)
-	// Numero de valores que o atributo tem (por ex, 3 coordenadas xyz) 
-	// Tipo do dado
-	// Se está normalizado (entre zero e um)
-	// Tamanho em bytes 
-	// Deslocamento a partir do byte zero 
-	
-	//Atributo posição (x, y, z)
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)0);
-	glEnableVertexAttribArray(0);
-
-	//Atributo cor (r, g, b)
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)(3*sizeof(GLfloat)));
-	glEnableVertexAttribArray(1);
-
-
-
-	// Observe que isso é permitido, a chamada para glVertexAttribPointer registrou o VBO como o objeto de buffer de vértice 
-	// atualmente vinculado - para que depois possamos desvincular com segurança
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	// Desvincula o VAO (é uma boa prática desvincular qualquer buffer ou array para evitar bugs medonhos)
-	glBindVertexArray(0);
-
-	return VAO;
 }
 
 int loadSimpleOBJ(string filepath, int &nVerts, glm::vec3 color)
@@ -527,5 +448,65 @@ int loadSimpleOBJ(string filepath, int &nVerts, glm::vec3 color)
 
 	return VAO;
 
+}
+
+//função para ler o conteúdo do arquivo mtl
+void loadSimpleMTL(string filepath)
+{
+	ifstream inputFile;
+	inputFile.open(filepath.c_str());
+	if (inputFile.is_open())
+	{
+		char line[100];
+		string sline;
+
+		while (!inputFile.eof())
+		{
+			inputFile.getline(line, 100);
+			sline = line;
+
+			string word;
+
+			istringstream ssline(line);
+			ssline >> word;
+
+			//cout << word << " ";
+			if (word == "Ns")
+			{
+				ssline >> q;//not sure
+
+			}
+
+			if (word == "Ka")
+			{
+				glm::vec3 kav;
+
+				ssline >> kav.x >> kav.y >> kav.z;
+
+				ka = (float) kav.x;
+			}
+			if (word == "Ks")
+			{
+				glm::vec3 ksv;
+
+				ssline >> ksv.x >> ksv.y >> ksv.z;
+
+				ks = ksv.x;
+			}
+			if (word == "Ke")
+			{
+				glm::vec3 ke;
+
+				ssline >> ke.x >> ke.y >> ke.z;
+
+				kd = ke.x;
+			}
+		}
+	}
+	else
+	{
+		cout << "Problema ao encontrar o arquivo " << filepath << endl;
+	}
+	inputFile.close();
 }
 
