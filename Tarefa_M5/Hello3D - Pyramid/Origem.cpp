@@ -25,6 +25,7 @@ using namespace std;
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Shader.h"
+#include "Camera.h"
 
 
 // Protótipo da função de callback de teclado
@@ -68,7 +69,7 @@ int main()
 //#endif
 
 	// Criação da janela GLFW
-	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Ola Triangulo!", nullptr, nullptr);
+	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Ola Triangulo em FPS!", nullptr, nullptr);
 	glfwMakeContextCurrent(window);
 
 	// Fazendo o registro da função de callback para a janela GLFW
@@ -105,24 +106,13 @@ int main()
 	// Gerando um buffer simples, com a geometria de um triângulo
 	GLuint VAO = setupGeometry();
 
-
 	glUseProgram(shader.ID);
 
-	glm::mat4 model = glm::mat4(1); //matriz identidade;
-	GLint modelLoc = glGetUniformLocation(shader.ID, "model");
-	//
-	model = glm::rotate(model, /*(GLfloat)glfwGetTime()*/glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-	glUniformMatrix4fv(modelLoc, 1, FALSE, glm::value_ptr(model));
-
-	//Definindo a matriz de view (posição e orientação da câmera)
-	glm::mat4 view = glm::lookAt(glm::vec3(0.0, 0.0, 3.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
-	GLint viewLoc = glGetUniformLocation(shader.ID, "view");
-	glUniformMatrix4fv(viewLoc, 1, FALSE, glm::value_ptr(view));
-
-	//Definindo a matriz de projeção perpectiva
-	glm::mat4 projection = glm::perspective(glm::radians(45.0f), (GLfloat)width / (GLfloat)height, 0.1f, 100.0f);
-	GLint projLoc = glGetUniformLocation(shader.ID, "projection");
-	glUniformMatrix4fv(projLoc, 1, FALSE, glm::value_ptr(projection));
+	//utiização da classe camera
+	Camera cam(shader.ID);
+	cam.iniciarCamera(width, height);
+	GLint modelLoc = 0;
+	//GLint viewLoc = 0;
 
 	glEnable(GL_DEPTH_TEST);
 
@@ -142,15 +132,15 @@ int main()
 
 		float angle = (GLfloat)glfwGetTime();
 
-		model = glm::mat4(1); 
+		glm::mat4 model = glm::mat4(1);
 
 		// model = glm::translate(model, glm::vec3(0.0, 0.0, cos(angle) * 10.0));
-		if (rotateX)
+		/*if (rotateX)
 		{
 			model = glm::rotate(model, angle, glm::vec3(1.0f, 0.0f, 0.0f));
 			
 		}
-		else if (rotateY)
+		else*/ if (rotateY)
 		{
 			model = glm::rotate(model, angle, glm::vec3(0.0f, 1.0f, 0.0f));
 
@@ -164,11 +154,8 @@ int main()
 		glUniformMatrix4fv(modelLoc, 1, FALSE, glm::value_ptr(model));
 
 		//Alterando a matriz de view (posição e orientação da câmera)
-		glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-		glUniformMatrix4fv(viewLoc, 1, FALSE, glm::value_ptr(view));
-
-
-
+		cam.moverCamera(cameraPos, cameraFront, cameraUp);
+		
 		// Chamada de desenho - drawcall
 		// Poligono Preenchido - GL_TRIANGLES
 		
@@ -199,12 +186,12 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
 
-	if (key == GLFW_KEY_X && action == GLFW_PRESS)
+	/*if (key == GLFW_KEY_X && action == GLFW_PRESS)
 	{
 		rotateX = true;
 		rotateY = false;
 		rotateZ = false;
-	}
+	}*/
 
 	if (key == GLFW_KEY_Y && action == GLFW_PRESS)
 	{
